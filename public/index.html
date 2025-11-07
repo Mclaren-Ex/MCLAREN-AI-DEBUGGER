@@ -3,316 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCLAREN Ultra-Pro AI Debugger • Enterprise Code Analysis</title>
+    <title>McLaren AI Debugger 2.0</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="app">
-        <!-- Professional Header -->
-        <header class="professional-header">
-            <div class="header-container">
-                <div class="brand-section">
-                    <div class="logo">
-                        <i class="fas fa-bug"></i>
-                    </div>
-                    <div class="brand-text">
-                        <h1>MCLAREN Ultra-Pro AI Debugger</h1>
-                        <p>Enterprise-Grade Code Analysis Platform</p>
+        <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <i class="fas fa-bug"></i>
+                    <div>
+                        <h1>McLaren AI Debugger 2.0</h1>
+                        <p>Advanced AI-Powered Code Analysis</p>
                     </div>
                 </div>
-                <div class="status-panel">
-                    <div class="status-item">
-                        <span class="status-label">System</span>
-                        <div class="status-indicator active">
-                            <span class="dot"></span>
-                            <span>OPERATIONAL</span>
-                        </div>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label">AI Engine</span>
-                        <div class="status-indicator active">
-                            <span class="dot"></span>
-                            <span>ONLINE</span>
-                        </div>
-                    </div>
-                    <div class="status-item">
-                        <span class="status-label">Analysis</span>
-                        <div class="status-indicator" id="analysisStatus">
-                            <span class="dot"></span>
-                            <span>READY</span>
-                        </div>
-                    </div>
+                <div class="status">
+                    <span class="status-dot online"></span>
+                    <span>System Online</span>
                 </div>
             </div>
         </header>
 
-        <!-- Main Dashboard -->
-        <main class="dashboard">
+        <main class="main">
             <div class="container">
-                <!-- Control Panel -->
-                <section class="control-panel">
-                    <div class="panel-header">
-                        <h2><i class="fas fa-code"></i> Code Analysis Workspace</h2>
-                        <div class="panel-actions">
-                            <button class="btn btn-secondary" id="clearBtn">
-                                <i class="fas fa-eraser"></i> Clear
-                            </button>
-                            <button class="btn btn-secondary" id="formatBtn">
-                                <i class="fas fa-indent"></i> Format
-                            </button>
-                            <button class="btn btn-primary" id="analyzeBtn">
-                                <i class="fas fa-rocket"></i> Deep Analysis
-                            </button>
+                <div class="workspace">
+                    <!-- Input Section -->
+                    <div class="input-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-code"></i> Code Input</h2>
+                        </div>
+                        
+                        <div class="code-controls">
+                            <div class="language-selector">
+                                <label>Language:</label>
+                                <select id="languageSelect">
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                    <option value="java">Java</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="php">PHP</option>
+                                </select>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn secondary" onclick="loadExample()">
+                                    <i class="fas fa-download"></i> Example
+                                </button>
+                                <button class="btn primary" onclick="analyzeCode()" id="analyzeBtn">
+                                    <i class="fas fa-rocket"></i> Analyze Code
+                                </button>
+                            </div>
+                        </div>
+
+                        <textarea id="codeInput" placeholder="Paste your code here..." spellcheck="false"></textarea>
+                        
+                        <div class="input-footer">
+                            <div class="char-count">
+                                <span id="charCount">0</span> characters
+                            </div>
+                            <div class="analysis-info">
+                                <span id="analysisInfo">Ready to analyze</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="workspace-grid">
-                        <!-- Input Section -->
-                        <div class="input-section">
-                            <div class="section-toolbar">
-                                <div class="language-selector">
-                                    <label for="languageSelect"><i class="fas fa-code"></i> Language</label>
-                                    <select id="languageSelect">
-                                        <option value="javascript">JavaScript</option>
-                                        <option value="python">Python</option>
-                                        <option value="java">Java</option>
-                                        <option value="cpp">C++</option>
-                                        <option value="typescript">TypeScript</option>
-                                        <option value="php">PHP</option>
-                                        <option value="ruby">Ruby</option>
-                                        <option value="go">Go</option>
-                                        <option value="rust">Rust</option>
-                                    </select>
-                                </div>
-                                <div class="analysis-config">
-                                    <label for="analysisDepth"><i class="fas fa-microscope"></i> Depth</label>
-                                    <select id="analysisDepth">
-                                        <option value="quick">Quick Scan</option>
-                                        <option value="comprehensive" selected>Comprehensive</option>
-                                        <option value="enterprise">Enterprise Deep</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="code-editor-container">
-                                <div class="editor-header">
-                                    <span>SOURCE CODE</span>
-                                    <div class="editor-stats">
-                                        <span id="lineCount">1 line</span>
-                                        <span id="charCount">0 chars</span>
-                                    </div>
-                                </div>
-                                <textarea 
-                                    id="codeInput" 
-                                    placeholder="// Paste or type your code here...&#10;// The AI will analyze: bugs, security issues, performance, and best practices&#10;&#10;function example() {&#10;    // Your code here&#10;}"
-                                    spellcheck="false"
-                                ></textarea>
-                            </div>
-
-                            <div class="input-footer">
-                                <div class="file-actions">
-                                    <button class="btn btn-outline" id="loadExampleBtn">
-                                        <i class="fas fa-download"></i> Load Example
-                                    </button>
-                                </div>
-                                <div class="analysis-info">
-                                    <span id="analysisTime">Ready for analysis</span>
-                                </div>
+                    <!-- Results Section -->
+                    <div class="results-section" id="resultsSection">
+                        <div class="section-header">
+                            <h2><i class="fas fa-chart-bar"></i> Analysis Results</h2>
+                            <div class="result-actions">
+                                <button class="btn secondary" onclick="copyFixedCode()">
+                                    <i class="fas fa-copy"></i> Copy Code
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Results Section -->
-                        <div class="results-section" id="resultsSection">
-                            <div class="results-header">
-                                <h3><i class="fas fa-chart-bar"></i> Analysis Report</h3>
-                                <div class="report-actions">
-                                    <button class="btn btn-outline" id="exportBtn">
-                                        <i class="fas fa-file-export"></i> Export
-                                    </button>
-                                    <button class="btn btn-outline" id="copyReportBtn">
-                                        <i class="fas fa-copy"></i> Copy
-                                    </button>
+                        <div class="results-content">
+                            <!-- Severity Card -->
+                            <div class="result-card severity-card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-exclamation-triangle"></i> Issue Severity</h3>
+                                    <div class="severity-badge" id="severityBadge">-</div>
+                                </div>
+                                <div class="card-content">
+                                    <p id="severityText">No analysis performed</p>
                                 </div>
                             </div>
 
-                            <div class="results-content">
-                                <!-- Summary Card -->
-                                <div class="summary-card">
-                                    <div class="summary-header">
-                                        <h4>Executive Summary</h4>
-                                        <div class="severity-badge" id="overallSeverity">-</div>
+                            <!-- Analysis Grid -->
+                            <div class="analysis-grid">
+                                <div class="result-card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-search"></i> Issue Analysis</h3>
                                     </div>
-                                    <div class="summary-content">
-                                        <div id="executiveSummary" class="executive-summary">
-                                            No analysis performed yet. Paste your code and click "Deep Analysis" to begin.
+                                    <div class="card-content">
+                                        <div id="explanation" class="analysis-text">
+                                            Analysis results will appear here.
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Detailed Analysis -->
-                                <div class="analysis-grid">
-                                    <!-- Issue Analysis -->
-                                    <div class="analysis-card critical">
-                                        <div class="card-header">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                            <h4>Issue Analysis</h4>
-                                        </div>
-                                        <div class="card-content">
-                                            <div id="explanation" class="analysis-content">
-                                                Detailed issue analysis will appear here after code review.
-                                            </div>
+                                <div class="result-card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-code"></i> Optimized Solution</h3>
+                                    </div>
+                                    <div class="card-content">
+                                        <pre id="fixedCode" class="code-block">// Fixed code will appear here</pre>
+                                    </div>
+                                </div>
+
+                                <div class="result-card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-cogs"></i> Solution Breakdown</h3>
+                                    </div>
+                                    <div class="card-content">
+                                        <div id="fixExplanation" class="analysis-text">
+                                            Detailed explanation will appear here.
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Fixed Code -->
-                                    <div class="analysis-card">
-                                        <div class="card-header">
-                                            <i class="fas fa-code"></i>
-                                            <h4>Optimized Solution</h4>
-                                        </div>
-                                        <div class="card-content">
-                                            <pre id="fixedCode" class="code-block">// Professional-grade solution will appear here</pre>
-                                            <div class="code-actions">
-                                                <button class="btn btn-small" onclick="copyCode()">
-                                                    <i class="fas fa-copy"></i> Copy Code
-                                                </button>
-                                                <button class="btn btn-small" id="replaceCodeBtn">
-                                                    <i class="fas fa-exchange-alt"></i> Replace Original
-                                                </button>
-                                            </div>
-                                        </div>
+                                <div class="result-card">
+                                    <div class="card-header">
+                                        <h3><i class="fas fa-lightbulb"></i> Best Practices</h3>
                                     </div>
-
-                                    <!-- Solution Breakdown -->
-                                    <div class="analysis-card">
-                                        <div class="card-header">
-                                            <i class="fas fa-cogs"></i>
-                                            <h4>Architecture Breakdown</h4>
-                                        </div>
-                                        <div class="card-content">
-                                            <div id="fixExplanation" class="analysis-content">
-                                                Comprehensive solution architecture and reasoning will be detailed here.
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Performance Metrics -->
-                                    <div class="analysis-card">
-                                        <div class="card-header">
-                                            <i class="fas fa-tachometer-alt"></i>
-                                            <h4>Performance Analysis</h4>
-                                        </div>
-                                        <div class="card-content">
-                                            <div id="performanceMetrics" class="metrics-grid">
-                                                <div class="metric">
-                                                    <span class="metric-label">Time Complexity</span>
-                                                    <span class="metric-value" id="timeComplexity">-</span>
-                                                </div>
-                                                <div class="metric">
-                                                    <span class="metric-label">Space Complexity</span>
-                                                    <span class="metric-value" id="spaceComplexity">-</span>
-                                                </div>
-                                                <div class="metric">
-                                                    <span class="metric-label">Performance Gain</span>
-                                                    <span class="metric-value" id="performanceGain">-</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Best Practices -->
-                                    <div class="analysis-card">
-                                        <div class="card-header">
-                                            <i class="fas fa-graduation-cap"></i>
-                                            <h4>Enterprise Standards</h4>
-                                        </div>
-                                        <div class="card-content">
-                                            <ul id="tipsList" class="best-practices-list">
-                                                <li>Professional coding standards and best practices will be listed here</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <!-- Security Analysis -->
-                                    <div class="analysis-card">
-                                        <div class="card-header">
-                                            <i class="fas fa-shield-alt"></i>
-                                            <h4>Security Assessment</h4>
-                                        </div>
-                                        <div class="card-content">
-                                            <div id="securityAnalysis" class="security-status">
-                                                <div class="security-indicator safe">
-                                                    <i class="fas fa-check-circle"></i>
-                                                    <span>Security analysis pending</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="card-content">
+                                        <ul id="tipsList" class="tips-list">
+                                            <li>Tips will appear here after analysis</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
-
-                <!-- Quick Actions Panel -->
-                <section class="quick-actions">
-                    <h3><i class="fas fa-bolt"></i> Quick Analysis Templates</h3>
-                    <div class="action-grid">
-                        <button class="action-btn" data-example="array-bug">
-                            <i class="fas fa-bug"></i>
-                            <span>Array Processing</span>
-                        </button>
-                        <button class="action-btn" data-example="async-bug">
-                            <i class="fas fa-sync-alt"></i>
-                            <span>Async/Await</span>
-                        </button>
-                        <button class="action-btn" data-example="security-bug">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Security Issues</span>
-                        </button>
-                        <button class="action-btn" data-example="performance-bug">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <span>Performance</span>
-                        </button>
-                    </div>
-                </section>
+                </div>
             </div>
         </main>
 
         <!-- Loading Overlay -->
         <div id="loadingOverlay" class="loading-overlay">
             <div class="loading-content">
-                <div class="loading-animation">
-                    <div class="loading-spinner"></div>
-                    <div class="loading-pulse"></div>
-                </div>
-                <h3>Deep Code Analysis in Progress</h3>
-                <p>Analyzing patterns, security, performance, and best practices...</p>
-                <div class="loading-steps">
-                    <div class="step active">
-                        <i class="fas fa-check"></i>
-                        <span>Code Parsing</span>
-                    </div>
-                    <div class="step">
-                        <i class="fas fa-check"></i>
-                        <span>Pattern Analysis</span>
-                    </div>
-                    <div class="step">
-                        <i class="fas fa-check"></i>
-                        <span>Security Scan</span>
-                    </div>
-                    <div class="step">
-                        <i class="fas fa-check"></i>
-                        <span>Optimization</span>
-                    </div>
-                </div>
+                <div class="loading-spinner"></div>
+                <h3>AI Analysis in Progress</h3>
+                <p>Analyzing your code with advanced AI...</p>
             </div>
         </div>
-
-        <!-- Notification System -->
-        <div id="notificationContainer" class="notification-container"></div>
     </div>
 
     <script src="script.js"></script>
