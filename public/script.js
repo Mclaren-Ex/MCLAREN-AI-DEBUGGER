@@ -1,116 +1,139 @@
-// Ultra-Pro AI Debugger - Enterprise Grade JavaScript
-class UltraProDebugger {
+class McLarenAIDebugger {
     constructor() {
-        // Auto-detect server URL for production
-        this.SERVER_URL = window.location.origin;
+        this.API_URL = window.location.origin;
         this.isAnalyzing = false;
-        this.currentAnalysisId = null;
-        
-        this.initializeApp();
+        this.init();
+    }
+
+    init() {
         this.bindEvents();
-        this.checkServerStatus();
+        this.loadExample();
+        this.updateCharCount();
     }
 
-    // ... rest of your existing code ...
-
-    async checkServerStatus() {
-        try {
-            const response = await fetch(`${this.SERVER_URL}/api/health`);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Server status:', data);
-                this.showNotification('Server connection established', 'success');
-                
-                // Update status panel with actual environment
-                this.updateStatusPanel(data);
-            } else {
-                throw new Error('Server not responding properly');
-            }
-        } catch (error) {
-            console.error('Server status check failed:', error);
-            this.showNotification('Connecting to server...', 'warning');
-            // Retry after 3 seconds
-            setTimeout(() => this.checkServerStatus(), 3000);
-        }
+    bindEvents() {
+        const codeInput = document.getElementById('codeInput');
+        codeInput.addEventListener('input', () => this.updateCharCount());
     }
 
-    updateStatusPanel(healthData) {
-        const analysisStatus = document.getElementById('analysisStatus');
-        if (healthData && healthData.status === 'OPERATIONAL') {
-            analysisStatus.querySelector('span:last-child').textContent = 'READY';
-            analysisStatus.classList.add('active');
-        }
+    updateCharCount() {
+        const code = document.getElementById('codeInput').value;
+        document.getElementById('charCount').textContent = code.length;
     }
 
-    // Enhanced analyzeCode method with better error handling
     async analyzeCode() {
         if (this.isAnalyzing) return;
 
         const code = document.getElementById('codeInput').value.trim();
         const language = document.getElementById('languageSelect').value;
-        const analysisDepth = document.getElementById('analysisDepth').value;
 
-        // Validation
-        if (!this.validateCode(code)) return;
+        if (!code || code.length < 5) {
+            alert('Please enter at least 5 characters of code');
+            return;
+        }
 
-        this.setAnalysisState(true);
-        this.currentAnalysisId = this.generateAnalysisId();
+        this.setLoading(true);
 
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-            const response = await fetch(`${this.SERVER_URL}/api/debug`, {
+            const response = await fetch(`${this.API_URL}/api/debug`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     code: code,
-                    language: language,
-                    analysisDepth: analysisDepth
-                }),
-                signal: controller.signal
+                    language: language
+                })
             });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-            }
 
             const data = await response.json();
 
-            if (!data.success) {
+            if (data.success) {
+                this.displayResults(data);
+            } else {
                 throw new Error(data.error || 'Analysis failed');
             }
 
-            this.displayResults(data);
-            this.showNotification('Deep analysis completed successfully', 'success');
-
         } catch (error) {
             console.error('Analysis error:', error);
-            
-            if (error.name === 'AbortError') {
-                this.showNotification('Request timeout - server is taking too long to respond', 'error');
-            } else {
-                this.showNotification(`Analysis failed: ${error.message}`, 'error');
-            }
+            alert('Analysis failed: ' + error.message);
         } finally {
-            this.setAnalysisState(false);
+            this.setLoading(false);
         }
     }
+
+    setLoading(loading) {
+        this.isAnalyzing = loading;
+        const overlay = document.getElementById('loadingOverlay');
+        const button = document.getElementById('analyzeBtn');
+        
+        if (loading) {
+            overlay.style.display = 'flex';
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        } else {
+            overlay.style.display = 'none';
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-rocket"></i> Analyze Code';
+        }
+    }
+
+    displayResults(data) {
+        // Update severity
+        const severityBadge = document.getElementById('severityBadge');
+        severityBadge.textContent = data.severity || 'unknown';
+        severityBadge.className = `severity-badge ${data.severity || 'low'}`;
+        
+        document.getElementById('severityText').textContent = `Issues detected: ${data.severity || 'low'} severity`;
+
+        // Update content
+        document.getElementById('explanation').textContent = data.explanation || 'No issues found.';
+        document.getElementById('fixedCode').textContent = data.fixedCode || '// No changes needed';
+        document.getElementById('fixExplanation').textContent = data.fixExplanation || 'No fixes applied.';
+
+        // Update tips
+        const tipsList = document.getElementById('tipsList');
+        if (data.tips && data.tips.length > 0) {
+            tipsList.innerHTML = data.tips.map(tip => `<li>${tip}</li>`).join('');
+        }
+
+        // Show results
+        document.getElementById('resultsSection').style.display = 'block';
+    }
+
+    loadExample() {
+        const exampleCode = `function calculateSum(numbers) {
+    let total = 0;
+    for (let i = 0; i <= numbers.length; i++) {
+        total += numbers[i];
+    }
+    return total;
 }
 
-// Initialize the application when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    window.debuggerApp = new UltraProDebugger();
-});
+const scores = [85, 92, 78, 96, 88];
+console.log(calculateSum(scores));`;
 
-// Global functions for HTML onclick handlers
-function copyCode() {
-    if (window.debuggerApp) {
-        window.debuggerApp.copyCode();
+        document.getElementById('codeInput').value = exampleCode;
+        this.updateCharCount();
     }
 }
+
+// Global functions
+function analyzeCode() {
+    window.debuggerApp.analyzeCode();
+}
+
+function loadExample() {
+    window.debuggerApp.loadExample();
+}
+
+function copyFixedCode() {
+    const fixedCode = document.getElementById('fixedCode').textContent;
+    navigator.clipboard.writeText(fixedCode);
+    alert('Fixed code copied to clipboard!');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    window.debuggerApp = new McLarenAIDebugger();
+});
