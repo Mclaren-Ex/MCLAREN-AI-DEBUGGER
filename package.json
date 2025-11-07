@@ -1,5 +1,5 @@
 {
-  "name": "ultra-pro-debugger",
+  "name": "mclaren-ai-debugger",
   "version": "2.0.0",
   "description": "Enterprise-grade AI-powered code analysis platform",
   "main": "server/index.js",
@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "nodemon server/index.js",
-    "test": "node --test server/tests/"
+    "test": "node --test server/tests/",
+    "build": "echo 'No build step required for Node.js'",
+    "render-build": "npm install"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -27,6 +29,13 @@
     "debugging",
     "code-analysis",
     "enterprise",
-    "professional"
-  ]
+    "professional",
+    "gemini",
+    "mclaren"
+  ],
+  "author": "Mclaren-Ex",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
